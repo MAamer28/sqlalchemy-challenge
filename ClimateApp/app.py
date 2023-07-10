@@ -55,7 +55,7 @@ def home():
 def precipitation():
     end_date = session.query(func.max(measurement.date)).first()[0]
     start_date = dt.datetime.strptime(end_date, "%Y-%m-%d") - dt.timedelta(days = 365)
-    yearly_prcp = session.query(measurement.date, measurement.prcp).filter(measurement.date >= start_date()).all()
+    yearly_prcp = session.query(measurement.date, measurement.prcp).filter(measurement.date >= str(start_date)).all()
 
     list_prcp = []
     for date, prcp in yearly_prcp:
@@ -91,22 +91,32 @@ def tobs():
     return jsonify(list_tobs)
 
 @app.route("/api/v1.0/<start>")
+def start_day(start):
+    start_results = session.query(func.min(measurement.tobs), func.max(measurement.tobs), func.avg(measurement.tobs)).filter(measurement.date >= start).all()
+
+    start_values = []
+    for min, max, avg in start_results:
+        start_dict = {}
+        start_dict["min"] = min
+        start_dict["max"] = max
+        start_dict["avg"] = avg
+        start_values.append(start_dict)
+
+    return jsonify(start_values)
+
 @app.route("/api/v1.0/<start>/<end>")
-def temp_info(start = None, end = None):
-    sel = [func.min(measurement.tobs), func.max(measurement.tobs), func.avg(measurement.tobs)]
+def start_to_end(start, end):
+    ste_results = session.query(func.min(measurement.tobs), func.max(measurement.tobs), func.avg(measurement.tobs)).filter(measurement.date >= start).filter(measurement.date <= end).all()
 
-    if end == None:
-        info_start = session.query(*sel).filter(measurement.date >= start).all()
+    ste_values = []
+    for min, max, avg in ste_results:
+        ste_dict = {}
+        ste_dict["min"] = min
+        ste_dict["max"] = max
+        ste_dict["avg"] = avg
+        ste_values.append(ste_dict)
 
-        list_start = list(np.ravel(info_start))
-
-        return jsonify(list_start)
-    
-    else:
-        period_data = session.query(*sel).filter(measurement.date >= start).filter(measurement.date <= end).all()
-        list_period = list(np.ravel(period_data))
-
-        return jsonify(list_period)
+    return jsonify(ste_values)
 
 session.close()
 
