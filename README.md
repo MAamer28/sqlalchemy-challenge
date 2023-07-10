@@ -37,3 +37,5 @@ USC00519281 was the most active station in terms of rows of data collected from 
 
 ![TOBs](https://github.com/MAamer28/sqlalchemy-challenge/assets/130619866/b484545c-f311-47fb-9906-a63846243211)
 
+## Climate API
+See the .py file in the ClimateApp folder for an API returning the answers to the queries above.
