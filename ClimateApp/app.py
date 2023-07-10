@@ -14,7 +14,7 @@ import datetime as dt
 
 
 # reflect an existing database into a new model
-engine = create_engine("sqlite:///Resources/hawaii.sqlite")
+engine = create_engine("sqlite:///hawaii.sqlite")
 
 Base = automap_base()
 
